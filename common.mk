@@ -23,6 +23,10 @@ $(call inherit-product, device/samsung/sprd-common/common.mk)
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay-lineage
 
+# Renderscript
+PRODUCT_PACKAGES += \
+    android.hardware.renderscript@1.0-impl
+
 # Audio
 PRODUCT_PACKAGES += \
 	audio_hw.xml \

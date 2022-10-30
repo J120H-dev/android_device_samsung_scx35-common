@@ -1,8 +1,12 @@
 # Audio
 PRODUCT_PACKAGES += \
 	android.hardware.audio@2.0-impl \
-    android.hardware.audio@2.0-service \
+	android.hardware.audio@2.0-service \
 	android.hardware.audio.effect@2.0-impl
+
+# Soundtrigger
+PRODUCT_PACKAGES += \
+	android.hardware.soundtrigger@2.0-impl
 
 # Bluetooth
 PRODUCT_PACKAGES += \
@@ -24,7 +28,10 @@ PRODUCT_PACKAGES += \
 
 # Graphics
 PRODUCT_PACKAGES += \
-	android.hardware.graphics.mapper@2.0-impl
+    android.hardware.configstore@1.0-service \
+    android.hardware.graphics.allocator@2.0-impl \
+    android.hardware.graphics.allocator@2.0-service \
+    android.hardware.graphics.mapper@2.0-impl
 
 # Keymaster
 PRODUCT_PACKAGES += \
