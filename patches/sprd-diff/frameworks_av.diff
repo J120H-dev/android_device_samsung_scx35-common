@@ -1,0 +1,158 @@
+diff --git a/media/libmedia/TypeConverter.cpp b/media/libmedia/TypeConverter.cpp
+index e6c8f9c..550661e 100644
+--- a/media/libmedia/TypeConverter.cpp
++++ b/media/libmedia/TypeConverter.cpp
+@@ -50,6 +50,9 @@ const OutputDeviceConverter::Table OutputDeviceConverter::mTable[] = {
+     MAKE_STRING_FROM_ENUM(AUDIO_DEVICE_OUT_HDMI_ARC),
+     MAKE_STRING_FROM_ENUM(AUDIO_DEVICE_OUT_SPDIF),
+     MAKE_STRING_FROM_ENUM(AUDIO_DEVICE_OUT_FM),
++    MAKE_STRING_FROM_ENUM(AUDIO_DEVICE_OUT_FM_HEADSET),
++    MAKE_STRING_FROM_ENUM(AUDIO_DEVICE_OUT_FM_SPEAKER),
++    MAKE_STRING_FROM_ENUM(AUDIO_DEVICE_OUT_ALL_FM),
+     MAKE_STRING_FROM_ENUM(AUDIO_DEVICE_OUT_AUX_LINE),
+     MAKE_STRING_FROM_ENUM(AUDIO_DEVICE_OUT_IP),
+     MAKE_STRING_FROM_ENUM(AUDIO_DEVICE_OUT_BUS),
+diff --git a/media/libstagefright/ACodec.cpp b/media/libstagefright/ACodec.cpp
+index def8ada..eec08d5 100644
+--- a/media/libstagefright/ACodec.cpp
++++ b/media/libstagefright/ACodec.cpp
+@@ -2250,6 +2250,10 @@ status_t ACodec::configureCodec(
+     int32_t maxInputSize;
+     if (msg->findInt32("max-input-size", &maxInputSize)) {
+         err = setMinBufferSize(kPortIndexInput, (size_t)maxInputSize);
++        //sprd added. inputPort must be identical to output for raw decoder.
++        if ((err == OK) && !strcasecmp(mime, MEDIA_MIMETYPE_AUDIO_RAW) ) {
++            err = setMinBufferSize(kPortIndexOutput, (size_t)maxInputSize);
++        }
+         err = OK; // ignore error
+     } else if (!strcmp("OMX.Nvidia.aac.decoder", mComponentName.c_str())) {
+         err = setMinBufferSize(kPortIndexInput, 8192);  // XXX
+@@ -2273,6 +2277,26 @@ status_t ACodec::configureCodec(
+         err = OK; // ignore errors
+     }
+ 
++    //check thumbnail mode
++    int32_t thumbnail = -1;
++    if (msg->findInt32("thumbnail", &thumbnail)) {
++        OMX_INDEXTYPE index;
++        err = mOMXNode->getExtensionIndex(
++                    "OMX.sprd.index.ThumbnailMode", &index);
++
++        if (err == OK) {
++            OMX_BOOL enable = OMX_TRUE;
++            err = mOMXNode->setConfig(index, &enable, sizeof(enable));
++        }
++
++        if (err != OK) {
++            ALOGI("[%s] setConfig(OMX.sprd.index.ThumbnailMode') invalid 0x%08x",
++                    mComponentName.c_str(), err);
++        }
++
++        err = OK; // ignore errors
++    }
++
+     if (err == OK) {
+         err = setVendorParameters(msg);
+         if (err != OK) {
+diff --git a/media/libstagefright/CameraSource.cpp b/media/libstagefright/CameraSource.cpp
+index 36a2d3f..f998033 100644
+--- a/media/libstagefright/CameraSource.cpp
++++ b/media/libstagefright/CameraSource.cpp
+@@ -143,7 +143,11 @@ static int32_t getColorFormat(const char* colorFormat) {
+     }
+ 
+     if (!strcmp(colorFormat, CameraParameters::PIXEL_FORMAT_YUV420SP)) {
++#ifdef USE_SPRD_COLORFORMAT
++        return OMX_SPRD_COLOR_FormatYVU420SemiPlanar;
++#else
+         return OMX_COLOR_FormatYUV420SemiPlanar;
++#endif
+     }
+ 
+     if (!strcmp(colorFormat, CameraParameters::PIXEL_FORMAT_YUV422I)) {
+diff --git a/media/libstagefright/MediaCodec.cpp b/media/libstagefright/MediaCodec.cpp
+index 759e42d..8ff593d 100644
+--- a/media/libstagefright/MediaCodec.cpp
++++ b/media/libstagefright/MediaCodec.cpp
+@@ -2086,6 +2086,10 @@ void MediaCodec::onMessageReceived(const sp<AMessage> &msg) {
+                 mFlags |= kFlagIsEncoder;
+             }
+ 
++            if (flags & CONFIGURE_FLAG_THUMBNAIL) {
++                format->setInt32("thumbnail", true);
++            }
++
+             extractCSD(format);
+ 
+             mCodec->initiateConfigureComponent(format);
+diff --git a/media/libstagefright/StagefrightMetadataRetriever.cpp b/media/libstagefright/StagefrightMetadataRetriever.cpp
+index e8c3dd3..40e1a6e 100644
+--- a/media/libstagefright/StagefrightMetadataRetriever.cpp
++++ b/media/libstagefright/StagefrightMetadataRetriever.cpp
+@@ -320,10 +320,10 @@ static VideoFrame *extractVideoFrame(
+     // fail if component requires more than that for decoding.
+     bool isSeekingClosest = (seekMode == MediaSource::ReadOptions::SEEK_CLOSEST);
+     bool decodeSingleFrame = !isSeekingClosest && (numTiles == 1);
+-    if (decodeSingleFrame) {
++    /*if (decodeSingleFrame) {
+         videoFormat->setInt32("android._num-input-buffers", 1);
+         videoFormat->setInt32("android._num-output-buffers", 1);
+-    }
++    }*/
+ 
+     status_t err;
+     sp<ALooper> looper = new ALooper;
+@@ -336,7 +336,8 @@ static VideoFrame *extractVideoFrame(
+         return NULL;
+     }
+ 
+-    err = decoder->configure(videoFormat, NULL /* surface */, NULL /* crypto */, 0 /* flags */);
++    err = decoder->configure(videoFormat, NULL /* surface */, NULL /* crypto */,
++                                            MediaCodec::CONFIGURE_FLAG_THUMBNAIL/* flags */);
+     if (err != OK) {
+         ALOGW("configure returned error %d (%s)", err, asString(err));
+         decoder->release();
+diff --git a/media/libstagefright/include/media/stagefright/MediaCodec.h b/media/libstagefright/include/media/stagefright/MediaCodec.h
+index 1030407..02ddcdb 100644
+--- a/media/libstagefright/include/media/stagefright/MediaCodec.h
++++ b/media/libstagefright/include/media/stagefright/MediaCodec.h
+@@ -58,6 +58,7 @@ using hardware::cas::native::V1_0::IDescrambler;
+ struct MediaCodec : public AHandler {
+     enum ConfigureFlags {
+         CONFIGURE_FLAG_ENCODE   = 1,
++        CONFIGURE_FLAG_THUMBNAIL   = 2,
+     };
+ 
+     enum BufferFlags {
+diff --git a/media/mtp/MtpDataPacket.cpp b/media/mtp/MtpDataPacket.cpp
+index d1c71d7..f5e4b74 100644
+--- a/media/mtp/MtpDataPacket.cpp
++++ b/media/mtp/MtpDataPacket.cpp
+@@ -441,7 +441,9 @@ void MtpDataPacket::putString(const uint16_t* string) {
+ 
+ #ifdef MTP_DEVICE
+ int MtpDataPacket::read(IMtpHandle *h) {
+-    int ret = h->read(mBuffer, MTP_BUFFER_SIZE);
++    /* SPRD: modify code for bug 492017. @{ */
++    int ret = h->read(mBuffer, 512);
++    /* @} */
+     if (ret < MTP_CONTAINER_HEADER_SIZE)
+         return -1;
+     mPacketSize = ret;
+diff --git a/media/mtp/MtpServer.cpp b/media/mtp/MtpServer.cpp
+index 89823c4..2df1805 100644
+--- a/media/mtp/MtpServer.cpp
++++ b/media/mtp/MtpServer.cpp
+@@ -454,8 +454,10 @@ bool MtpServer::handleRequest() {
+             break;
+     }
+ 
+-    if (response == MTP_RESPONSE_TRANSACTION_CANCELLED)
+-        return false;
++    /* SPRD: modify code for bug 491977. @{ */
++    //if (response == MTP_RESPONSE_TRANSACTION_CANCELLED)
++        //return false;
++    /* @} */
+     mResponse.setResponseCode(response);
+     return true;
+ }
