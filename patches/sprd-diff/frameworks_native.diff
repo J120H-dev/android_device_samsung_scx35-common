@@ -1,15 +1,3 @@
-diff --git a/headers/media_plugin/media/openmax/OMX_IVCommon.h b/headers/media_plugin/media/openmax/OMX_IVCommon.h
-index f9b6f4b..4934a2e 100644
---- a/headers/media_plugin/media/openmax/OMX_IVCommon.h
-+++ b/headers/media_plugin/media/openmax/OMX_IVCommon.h
-@@ -170,6 +170,7 @@ typedef enum OMX_COLOR_FORMATTYPE {
-     OMX_QCOM_COLOR_FormatYUV420PackedSemiPlanar64x32Tile2m8ka = 0x7FA30C03,
-     OMX_SEC_COLOR_FormatNV12Tiled = 0x7FC00002,
-     OMX_QCOM_COLOR_FormatYUV420PackedSemiPlanar32m = 0x7FA30C04,
-+    OMX_SPRD_COLOR_FormatYVU420SemiPlanar = 0x7FD00001,
-     OMX_COLOR_FormatMax = 0x7FFFFFFF
- } OMX_COLOR_FORMATTYPE;
- 
 diff --git a/libs/binder/IPCThreadState.cpp b/libs/binder/IPCThreadState.cpp
 index e832961..a92c74f 100644
 --- a/libs/binder/IPCThreadState.cpp
