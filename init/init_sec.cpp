@@ -42,6 +42,7 @@ std::string bootloader;
 std::string device;
 
 enum device_variant {
+	J120H,
 	G360H,
 	G360HU,
 	I9060I,
@@ -55,7 +56,9 @@ enum device_variant {
 
 device_variant match(std::string bl)
 {
-	if (bl.find("G360H") != std::string::npos) {
+	if (bl.find("J120H") != std::string::npos) {
+			return J120H;
+	} else if (bl.find("G360H") != std::string::npos) {
 			return G360H;
 	} else if (bl.find("G360HU") != std::string::npos) {
 			return G360HU;
@@ -98,6 +101,11 @@ void vendor_load_properties()
 	device_variant variant = find_device_variant();
 
 	switch (variant) {
+		case J120H:
+			/* j1x3g */
+			property_override("ro.product.model", "SM-J120H");
+			property_override("ro.product.device", "j1x3g");
+			break;
 		case G360H:
 			/* core33gdd */
 			property_override("ro.product.model", "SM-G360H");
