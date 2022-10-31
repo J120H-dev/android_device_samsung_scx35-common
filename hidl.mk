@@ -23,11 +23,6 @@ PRODUCT_PACKAGES += \
     android.hardware.health@1.0-impl \
     android.hardware.health@1.0-service
 
-# Gatekeeper
-PRODUCT_PACKAGES += \
-    android.hardware.gatekeeper@1.0-service \
-    android.hardware.gatekeeper@1.0-impl
-
 # Camera
 PRODUCT_PACKAGES += \
 	android.hardware.camera.provider@2.4-impl-legacy \
