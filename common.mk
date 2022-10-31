@@ -147,10 +147,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
 	Jelly
 
-# Lights
-PRODUCT_PACKAGES += \
-	lights.sc8830
-
 # Camera config
 PRODUCT_PROPERTY_OVERRIDES += \
 	camera.disable_zsl_mode=1

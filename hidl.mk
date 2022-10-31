@@ -18,6 +18,12 @@ PRODUCT_PACKAGES += \
 	android.hardware.camera.provider@2.4-impl-legacy \
  	camera.device@1.0-impl-legacy
 
+# Lights
+PRODUCT_PACKAGES += \
+    lights.sc8830 \
+    android.hardware.light@2.0-impl \
+    android.hardware.light@2.0-service
+
 # GPS
 PRODUCT_PACKAGES += \
 	android.hardware.gnss@1.0-impl
