@@ -13,6 +13,21 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
 	android.hardware.broadcastradio@1.0-impl
 
+# Thermal
+PRODUCT_PACKAGES += \
+    android.hardware.thermal@1.1-impl \
+    android.hardware.thermal@1.1-service
+
+# Health
+PRODUCT_PACKAGES += \
+    android.hardware.health@1.0-impl \
+    android.hardware.health@1.0-service
+
+# Gatekeeper
+PRODUCT_PACKAGES += \
+    android.hardware.gatekeeper@1.0-service \
+    android.hardware.gatekeeper@1.0-impl
+
 # Camera
 PRODUCT_PACKAGES += \
 	android.hardware.camera.provider@2.4-impl-legacy \
