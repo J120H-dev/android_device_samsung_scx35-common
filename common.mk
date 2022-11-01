@@ -115,6 +115,11 @@ PRODUCT_PACKAGES += \
 	libmemoryheapion \
 	libion_sprd
 
+
+# Memtrack
+PRODUCT_PACKAGES += \
+        memtrack.sc8830
+
 # System init.rc files
 PRODUCT_PACKAGES += \
 	at_distributor.rc \
