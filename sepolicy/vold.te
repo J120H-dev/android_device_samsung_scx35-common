@@ -1,8 +1,8 @@
-allow vold proc:file write;
+allow vold tmpfs:lnk_file create_file_perms;
 allow vold kernel:system module_request;
-allow vold fuse_device:chr_file getattr;
-allow vold cache_file:dir setattr;
-allow vold system_prop:property_service set;
-allow vold unlabeled:filesystem getattr;
-allow vold efs_file:dir { open read };
-allow vold prod_file:dir { open read };
+
+allow vold mnt_media_rw_file:dir mounton;
+allow vold mmcblk_device:blk_file { read write open ioctl getattr };
+allow vold storage_file:lnk_file create_file_perms;
+
+allow vold prod_file:dir {read open};

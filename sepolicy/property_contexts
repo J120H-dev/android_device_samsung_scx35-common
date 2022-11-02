@@ -1,19 +1,31 @@
-# RIL
-ctl.phoneserver_w                   u:object_r:ctl_rildaemon_prop:s0
-ctl.phoneserver_td                  u:object_r:ctl_rildaemon_prop:s0
-ctl.data_on                         u:object_r:ctl_rildaemon_prop:s0
-ctl.data_off                        u:object_r:ctl_rildaemon_prop:s0
-ctl.kill_w_phone                    u:object_r:ctl_rildaemon_prop:s0
-ctl.kill_td_phone                   u:object_r:ctl_rildaemon_prop:s0
-ctl.smd_symlink                     u:object_r:ctl_rildaemon_prop:s0
+##########################
+# property service keys
+#
+#
 
-sys.symlink.umts_router             u:object_r:radio_prop:s0
+persist.msms.           u:object_r:radio_prop:s0
 
-# ENGPC
-ctl.engpcclientw                    u:object_r:ctl_engpc_prop:s0
-ctl.engpcclientwcn                  u:object_r:ctl_engpc_prop:s0
-ctl.engservicew                     u:object_r:ctl_engpc_prop:s0
-ctl.engmodemclientw                 u:object_r:ctl_engpc_prop:s0
+media.dump.switch u:object_r:media_prop:s0
+media.dump.path u:object_r:media_prop:s0
+volte.incall.camera.enable u:object_r:media_prop:s0
+persist.volte.cmr.fps u:object_r:media_prop:s0
 
-# Media
-media.                              u:object_r:media_prop:s0
+
+persist.storage         u:object_r:storage_prop:s0
+sys.internal.emulated   u:object_r:storage_prop:s0
+
+slog.reload                u:object_r:slog_prop:s0
+slog.step              u:object_r:slog_prop:s0
+slog.top_logdir u:object_r:slog_prop:s0
+
+ylog.killed             u:object_r:ylog_prop:s0
+persist.ylog.enabled   u:object_r:ylog_prop:s0
+
+
+ylog.svc.   u:object_r:ylog_prop:s0
+
+flag.apr.bootmode u:object_r:apr_prop:s0
+
+#add for MSR test
+com.sprd.szsde.running  u:object_r:system_prop:s0
+com.sprd.szsde.reboot  u:object_r:system_prop:s0

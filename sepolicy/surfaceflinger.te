@@ -1,4 +1,3 @@
-set_prop(surfaceflinger, ctl_default_prop);
-set_prop(surfaceflinger, shell_prop);
+allow surfaceflinger system_data_file:dir { write add_name };
 
-allow surfaceflinger kernel:system module_request;
+allow surfaceflinger slogd:binder {call transfer};

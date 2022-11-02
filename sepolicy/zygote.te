@@ -1,21 +1,19 @@
-set_prop(zygote, media_prop);
+allow zygote system_data_file:dir { write add_name };
+allow zygote fuse:file { create read write open };
+allow zygote zygote:capability sys_boot;
+allow zygote proc_sysrq:file { write open };
 
-allow zygote cpuctl_device:dir search;
-#allow zygote device:chr_file { open read write getattr ioctl };
-#allow zygote media_app:binder { call transfer };
-#allow zygote media_app:fd use;
-allow zygote mediaserver:binder { call transfer };
-#allow zygote platform_app_data_file:dir search;
-#allow zygote platform_app_data_file:file { open read getattr append };
-allow zygote proc:file { write append };
-allow zygote property_socket:sock_file write;
-allow zygote self:capability sys_boot;
-allow zygote servicemanager:binder transfer;
-allow zygote surfaceflinger:binder { call transfer };
-allow zygote surfaceflinger:fd use;
-allow zygote surfaceflinger:unix_stream_socket { read write };
-allow zygote system_data_file:dir { create setattr };
+allow zygote vfat:filesystem unmount;
+allow zygote shell_exec:file execute;
+
+allow zygote servicemanager:binder call;
 allow zygote system_prop:property_service set;
-#allow zygote system:unix_stream_socket { read write };
-allow zygote kernel:system module_request;
-allow zygote device:file { open read write getattr };
+allow zygote property_socket:sock_file write;
+allow zygote init:unix_stream_socket connectto;
+allow zygote tmpfs:lnk_file create;
+
+allow zygote system_server:binder { call transfer };
+allow zygote activity_service:service_manager find;
+allow zygote window_service:service_manager find;
+allow zygote package_service:service_manager find;
+allow zygote input_service:service_manager find;

@@ -1,1 +1,5 @@
-allow at_distributor unlabeled:file r_file_perms;
+type at_distributor, domain;
+type at_distributor_exec, exec_type, file_type;
+
+init_daemon_domain(at_distributor)
+
