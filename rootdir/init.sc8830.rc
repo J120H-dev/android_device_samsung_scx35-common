@@ -17,10 +17,6 @@ on early-init
     mount debugfs /sys/kernel/debug /sys/kernel/debug
 
 on init
-    # Processgroup
-    chown system system /acct/uid_*
-    chmod 0770 /acct/uid_*
-
     mkdir /productinfo 0771 system system
     symlink /dev/block/platform/sdio_emmc/by-name/PERSISTENT /dev/block/persistent
 
@@ -68,6 +64,10 @@ service charger /charger
     seclabel u:r:healthd:s0
 
 on post-fs
+    # Processgroup
+    chown system system /acct/uid_*
+    chmod 0770 /acct/uid_*
+
     chown system system /productinfo
     chmod 0771 /productinfo
 
