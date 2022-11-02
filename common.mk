@@ -56,6 +56,10 @@ PRODUCT_PACKAGES += \
 	libstagefright_sprd_aacdec \
 	libstagefright_sprd_mp3dec
 
+# Livedisplay
+PRODUCT_PACKAGES += \
+    vendor.lineage.livedisplay@1.0-service
+
 # seccomp
 PRODUCT_COPY_FILES += \
 	device/samsung/scx35-common/seccomp/mediacodec-seccomp.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediacodec.policy
@@ -166,8 +170,11 @@ PRODUCT_PACKAGES += \
 	macloader \
 	libandroid_net \
 	libwpa_client \
+	wifiloader \
+	hostapd \
 	wificond \
 	wifilogd \
+	wpa_supplicant \
 	wpa_supplicant.conf \
 	wpa_supplicant_overlay.conf \
 	p2p_supplicant_overlay.conf
