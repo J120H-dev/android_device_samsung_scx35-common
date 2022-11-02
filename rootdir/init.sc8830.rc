@@ -64,14 +64,14 @@ service charger /charger
     seclabel u:r:healthd:s0
 
 on post-fs
-    # Processgroup
-    chown system system /acct/uid_*
-    chmod 0770 /acct/uid_*
-
     chown system system /productinfo
     chmod 0771 /productinfo
 
 on post-fs-data
+    # Processgroup
+    chown system system /acct/uid_*
+    chmod 0770 /acct/uid_*
+
     copy /system/etc/bluetooth/bt_stack.conf /data/misc/bluedroid/bt_stack.conf
     chown bluetooth system /data/misc/bluedroid/bt_stack.conf
     chmod 0640 /data/misc/bluedroid/bt_stack.conf
